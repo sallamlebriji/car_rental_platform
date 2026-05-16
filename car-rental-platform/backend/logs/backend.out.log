@@ -1,0 +1,5 @@
+
+> car-rental-platform-backend@1.0.0 dev
+> node --watch src/server.js
+
+Failed running 'src/server.js'

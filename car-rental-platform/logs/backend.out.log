@@ -1,0 +1,12 @@
+
+> car-rental-platform-backend@1.0.0 dev
+> node --watch src/server.js
+
+Backend running on http://localhost:5000
+Restarting 'src/server.js'
+Backend running on http://localhost:5000
+Restarting 'src/server.js'
+Backend running on http://localhost:5000
+Failed running 'src/server.js'
+Restarting 'src/server.js'
+Backend running on http://localhost:5000

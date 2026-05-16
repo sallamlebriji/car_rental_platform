@@ -1,0 +1,7 @@
+npm error Lifecycle script `dev` failed with error:
+npm error code 4294967295
+npm error path C:\Users\pc\Downloads\gestion location\car-rental-platform\frontend
+npm error workspace car-rental-platform-frontend@1.0.0
+npm error location C:\Users\pc\Downloads\gestion location\car-rental-platform\frontend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vite --port 5174
