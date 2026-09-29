@@ -246,7 +246,7 @@ export default function SuperAdminDocumentSettingsPage() {
             </div>
 
             <div className="space-y-5 p-6">
-              <div className="rounded-[1.8rem] bg-slate-950 p-6 text-white">
+              <div className="rounded-card-secondary bg-slate-950 p-6 text-white">
                 <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Modele actif</p>
                 <h3 className="mt-3 text-3xl font-semibold tracking-tight">{contractTitle || "Contrat de location"}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-300">

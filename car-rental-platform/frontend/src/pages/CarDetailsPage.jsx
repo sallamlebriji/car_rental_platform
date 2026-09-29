@@ -30,7 +30,7 @@ export default function CarDetailsPage() {
   return (
     <div className="space-y-8">
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-white/90 shadow-[0_28px_80px_rgba(15,23,42,0.08)]">
+        <div className="overflow-hidden rounded-card-primary border border-white/70 bg-white/90 shadow-soft">
           <img
             src={car.images?.[0]?.url || "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80"}
             alt={car.model}
@@ -39,7 +39,7 @@ export default function CarDetailsPage() {
         </div>
 
         <div className="space-y-5">
-          <div className="rounded-[2.2rem] border border-white/70 bg-white/90 p-6 shadow-[0_24px_65px_rgba(15,23,42,0.08)]">
+          <div className="rounded-card-primary border border-white/70 bg-white/90 p-6 shadow-soft">
             <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs uppercase tracking-[0.26em] text-slate-500">
               {activeAgency?.name || "Agence"}
             </span>
@@ -76,7 +76,7 @@ export default function CarDetailsPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_24px_65px_rgba(15,23,42,0.08)]">
+        <div className="rounded-card-primary border border-white/70 bg-white/90 p-6 shadow-soft">
           <h3 className="text-2xl font-semibold text-slate-950">Packs disponibles</h3>
           <div className="mt-5 space-y-3">
             {(Array.isArray(packs) ? packs : []).map((pack) => (
@@ -91,7 +91,7 @@ export default function CarDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_24px_65px_rgba(15,23,42,0.08)]">
+        <div className="rounded-card-primary border border-white/70 bg-white/90 p-6 shadow-soft">
           <h3 className="text-2xl font-semibold text-slate-950">Options supplementaires</h3>
           <div className="mt-5 space-y-3">
             {(Array.isArray(options) ? options : []).map((option) => (

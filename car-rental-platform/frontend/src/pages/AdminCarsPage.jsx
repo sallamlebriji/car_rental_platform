@@ -47,7 +47,7 @@ const transmissionOptions = ["Manuelle", "Automatique"];
 
 function FleetStatCard({ icon: Icon, label, value, hint, tone }) {
   return (
-    <div className="overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white/90 shadow-soft backdrop-blur">
+    <div className="overflow-hidden rounded-card-secondary border border-slate-200 bg-white/90 shadow-soft backdrop-blur">
       <div className={`h-1.5 bg-gradient-to-r ${tone}`} />
       <div className="space-y-4 p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -394,7 +394,7 @@ export default function AdminCarsPage() {
           </div>
 
           <div className="space-y-6 p-6">
-            <div className="rounded-[2rem] bg-slate-950 p-6 text-white">
+            <div className="rounded-card-primary bg-slate-950 p-6 text-white">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Nouveau vehicule</p>
@@ -410,16 +410,16 @@ export default function AdminCarsPage() {
                 </div>
               </div>
 
-              <div className="mt-6 overflow-hidden rounded-[1.6rem] border border-white/10">
+              <div className="mt-6 overflow-hidden rounded-card-secondary border border-white/10">
                 <img src={previewImage} alt={previewTitle || "Voiture"} className="h-52 w-full object-cover" />
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-white/6 p-4">
+                <div className="rounded-2xl bg-white/5 p-4">
                   <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Prix</p>
                   <p className="mt-2 text-2xl font-semibold">{currency(form.pricePerDay)}</p>
                 </div>
-                <div className="rounded-2xl bg-white/6 p-4">
+                <div className="rounded-2xl bg-white/5 p-4">
                   <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Caution</p>
                   <p className="mt-2 text-2xl font-semibold">{currency(form.depositAmount)}</p>
                 </div>

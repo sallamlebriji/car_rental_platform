@@ -1,8 +1,12 @@
-import { Building2, CarFront, CircleDollarSign, Network, RadioTower, ReceiptText } from "lucide-react";
+import { Building2, CarFront, CircleDollarSign, Network, ReceiptText } from "lucide-react";
 import DataTable from "../components/DataTable";
+import Panel, { PageHeader } from "../components/ui/Panel";
+import CountUp from "../components/ui/CountUp";
+import EmptyState from "../components/ui/EmptyState";
+import { Item, Stagger } from "../components/ui/Reveal";
 import { DashboardKpi, HorizontalMetricBars, RevenueBars, StatusDonut } from "../components/DashboardWidgets";
 import { useFetch } from "../hooks/useFetch";
-import { compactCurrency, currency } from "../utils/format";
+import { compactCurrency } from "../utils/format";
 
 export default function SuperAdminDashboardPage() {
   const { data: stats } = useFetch("/dashboard/stats", []);
@@ -45,102 +49,65 @@ export default function SuperAdminDashboardPage() {
   const activeRatio = Math.round(((overview?.activeAgencies || 0) / Math.max(overview?.totalAgencies || 1, 1)) * 100);
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[2.4rem] bg-slate-950 px-7 py-8 text-white shadow-soft lg:px-8 lg:py-9">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(45,212,191,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.12),transparent_28%)]" />
-        <div className="relative space-y-8">
-          <div className="space-y-6">
-            <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
-              Vision reseau
-            </span>
-            <div>
-              <h1 className="text-5xl font-semibold tracking-tight md:text-7xl">Super admin</h1>
-              <p className="mt-5 max-w-4xl text-lg leading-relaxed text-slate-200 md:text-[1.05rem]">
-                Vue globale du reseau d'agences, du volume de reservations et de la performance commerciale consolidee.
-              </p>
-            </div>
-          </div>
+    <Stagger className="space-y-6" stagger={0.1}>
+      <Item>
+        <PageHeader
+          eyebrow="Vision reseau"
+          title="Super admin"
+          description="Vue globale du reseau d'agences, du volume de reservations et de la performance commerciale consolidee."
+        />
+      </Item>
 
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div className="rounded-[2rem] bg-white/5 px-7 py-7 backdrop-blur">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-[15px] font-medium text-slate-300">Reseau actif</p>
-                  <h2 className="mt-5 text-5xl font-semibold tracking-tight">{overview?.activeAgencies || 0}</h2>
-                  <p className="mt-5 text-lg text-slate-400">Agences actives sur {overview?.totalAgencies || 0}.</p>
-                </div>
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.6rem] bg-white/10">
-                  <RadioTower size={30} />
-                </div>
+      <Item className="grid gap-6 xl:grid-cols-12">
+        <section className="card-primary xl:col-span-8">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full anim-breathe" style={{ background: "radial-gradient(circle, color-mix(in srgb, var(--primary-color) 35%, transparent), transparent 70%)" }} />
+          <div className="relative p-6 md:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-sm text-slate-400">Revenu consolide</p>
+                <h2 className="mt-2 font-display text-5xl font-semibold tracking-tight text-white md:text-6xl">
+                  <CountUp value={stats?.estimatedRevenue || 0} format={(n) => compactCurrency(n)} />
+                </h2>
+                <p className="mt-3 text-sm text-slate-400">Vision consolidee de toutes les agences.</p>
+              </div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white">
+                <CircleDollarSign size={20} />
               </div>
             </div>
-
-            <div className="rounded-[2rem] bg-white/5 px-7 py-7 backdrop-blur">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-[15px] font-medium text-slate-300">Revenu consolide</p>
-                  <h2 className="mt-5 break-words text-4xl font-semibold leading-tight md:text-5xl">
-                    {compactCurrency(stats?.estimatedRevenue || 0)}
-                  </h2>
-                  <p className="mt-5 text-lg text-slate-400">Vision consolidee de toutes les agences.</p>
-                </div>
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.6rem] bg-white/10">
-                  <CircleDollarSign size={30} />
-                </div>
-              </div>
+            <div className="mt-8 rounded-2xl bg-white p-5 text-slate-900">
+              <p className="mb-4 text-sm font-semibold">Evolution du revenu global</p>
+              {revenueBars.length ? (
+                <RevenueBars values={revenueBars} height="h-48" />
+              ) : (
+                <EmptyState compact title="Pas encore de revenu" description="Le graphe apparaitra des les premieres reservations." />
+              )}
             </div>
           </div>
+        </section>
+
+        <div className="grid content-start gap-4 sm:grid-cols-2 xl:col-span-4 xl:grid-cols-1">
+          <DashboardKpi icon={Building2} label="Agences" value={overview?.totalAgencies || 0} tone="from-sky-500 to-cyan-500" progress={100} hint="Nombre total d'entites creees." />
+          <DashboardKpi icon={Network} label="Agences actives" value={overview?.activeAgencies || 0} tone="from-emerald-500 to-teal-500" progress={activeRatio} hint="Part des agences actuellement exploitables." />
+          <DashboardKpi icon={CarFront} label="Voitures total" value={stats?.totalCars || 0} tone="from-amber-500 to-orange-500" progress={70} hint="Parc cumule sur l'ensemble du reseau." />
+          <DashboardKpi icon={ReceiptText} label="Reservations total" value={stats?.totalReservations || 0} tone="from-fuchsia-500 to-violet-500" progress={80} hint="Volume consolide des demandes." />
         </div>
-      </section>
+      </Item>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <DashboardKpi icon={Building2} label="Agences" value={overview?.totalAgencies || 0} tone="from-sky-500 to-cyan-500" progress={100} hint="Nombre total d'entites creees." />
-        <DashboardKpi icon={Network} label="Agences actives" value={overview?.activeAgencies || 0} tone="from-emerald-500 to-teal-500" progress={activeRatio} hint="Part des agences actuellement exploitables." />
-        <DashboardKpi icon={CarFront} label="Voitures total" value={stats?.totalCars || 0} tone="from-amber-500 to-orange-500" progress={70} hint="Parc cumule sur l'ensemble du reseau." />
-        <DashboardKpi icon={ReceiptText} label="Reservations total" value={stats?.totalReservations || 0} tone="from-fuchsia-500 to-violet-500" progress={80} hint="Volume consolide des demandes." />
-      </section>
+      <Item className="grid gap-6 xl:grid-cols-12">
+        <Panel className="xl:col-span-4" title="Statuts de reservation" description="Distribution de tous les statuts du reseau.">
+          <StatusDonut items={donutItems} centerLabel="Reseau" />
+        </Panel>
+        <Panel className="xl:col-span-8" title="Reservations par agence" description="Vue comparative de l'activite du reseau.">
+          {agencyBars.length ? <HorizontalMetricBars items={agencyBars} /> : <EmptyState compact title="Aucune agence" />}
+        </Panel>
+      </Item>
 
-      <section className="grid gap-6 2xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="card overflow-hidden">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <h2 className="text-2xl font-semibold text-slate-900">Evolution du revenu global</h2>
-            <p className="mt-1 text-sm text-slate-500">Lecture des revenus sur les dernieres periodes.</p>
-          </div>
-          <div className="p-6">
-            {revenueBars.length ? <RevenueBars values={revenueBars} /> : <div className="flex h-72 items-center justify-center rounded-[1.6rem] bg-slate-50 text-slate-500">Pas encore assez de donnees pour afficher un graphe.</div>}
-          </div>
-        </div>
-
-        <div className="card overflow-hidden">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <h2 className="text-2xl font-semibold text-slate-900">Statuts de reservation</h2>
-            <p className="mt-1 text-sm text-slate-500">Distribution de tous les statuts du reseau.</p>
-          </div>
-          <div className="p-6">
-            <StatusDonut items={donutItems} centerLabel="Reseau" />
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 2xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="card overflow-hidden">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <h2 className="text-2xl font-semibold text-slate-900">Reservations par agence</h2>
-            <p className="mt-1 text-sm text-slate-500">Vue comparative de l'activite du reseau.</p>
-          </div>
-          <div className="p-6">
-            <HorizontalMetricBars items={agencyBars} />
-          </div>
-        </div>
-
-        <div className="card overflow-hidden">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <h2 className="text-2xl font-semibold text-slate-900">Agences detaillees</h2>
-            <p className="mt-1 text-sm text-slate-500">Comparatif des volumes, de la flotte et des utilisateurs par agence.</p>
-          </div>
+      <Item>
+        <Panel title="Agences detaillees" description="Comparatif des volumes, de la flotte et des utilisateurs par agence." padded={false}>
           <DataTable
+            bare
             columns={[
-              { key: "name", label: "Agence" },
+              { key: "name", label: "Agence", render: (row) => <span className="font-medium text-slate-900">{row.name}</span> },
               { key: "city", label: "Ville" },
               { key: "users", label: "Utilisateurs", render: (row) => row._count?.users || 0 },
               { key: "cars", label: "Voitures", render: (row) => row._count?.cars || 0 },
@@ -148,8 +115,8 @@ export default function SuperAdminDashboardPage() {
             ]}
             rows={agencies}
           />
-        </div>
-      </section>
-    </div>
+        </Panel>
+      </Item>
+    </Stagger>
   );
 }

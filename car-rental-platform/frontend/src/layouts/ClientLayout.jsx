@@ -2,6 +2,10 @@ import { Link, NavLink, Outlet, useSearchParams } from "react-router-dom";
 import { Building2, ChevronDown, Compass, CarFront, CalendarClock, Sparkles, UserCircle2, LogOut } from "lucide-react";
 import { useThemeSettings } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import SmoothScroll from "../components/ui/SmoothScroll";
+import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
+import { pageTransition } from "../motion";
 
 function navClass({ isActive }) {
   return [
@@ -26,6 +30,7 @@ export default function ClientLayout() {
   } = useThemeSettings();
   const { user, logout } = useAuth();
   const [, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   function handleAgencyChange(event) {
     if (isAgencyLocked) return;
@@ -46,8 +51,9 @@ export default function ClientLayout() {
   const registerPath = buildClientPath("/register");
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(15,118,110,0.14),transparent_22%),radial-gradient(circle_at_top_right,rgba(245,158,11,0.12),transparent_18%),linear-gradient(180deg,#eff4fb_0%,#f8fafc_45%,#eef2ff_100%)]">
-      <header className="relative overflow-hidden border-b border-white/20 bg-slate-950 text-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]">
+    <div className="min-h-screen">
+      <SmoothScroll />
+      <header className="relative overflow-hidden border-b border-white/20 bg-slate-950 text-white shadow-soft">
         <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(59,130,246,0.08),transparent_35%,rgba(20,184,166,0.14))]" />
         <div className="relative mx-auto max-w-7xl px-4 py-5 lg:px-6">
           <div className="flex flex-col gap-5">
@@ -106,21 +112,21 @@ export default function ClientLayout() {
                 <div className="flex flex-wrap items-center gap-3 md:justify-end">
                   {user ? (
                     <>
-                      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/8 px-4 py-2">
+                      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2">
                         <UserCircle2 size={18} className="text-white/75" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium text-white">{user.firstName} {user.lastName}</p>
                           <p className="truncate text-xs text-white/55">{user.email}</p>
                         </div>
                       </div>
-                      <button className="btn-secondary gap-2 border-white/15 bg-white/8 text-white hover:bg-white/12" onClick={logout}>
+                      <button className="btn-secondary gap-2 border-white/15 bg-white/10 text-white hover:bg-white/15" onClick={logout}>
                         <LogOut size={16} />
                         Deconnexion
                       </button>
                     </>
                   ) : (
                     <>
-                      <Link className="btn-secondary border-white/15 bg-white/8 text-white hover:bg-white/12" to={loginPath}>Connexion</Link>
+                      <Link className="btn-secondary border-white/15 bg-white/10 text-white hover:bg-white/15" to={loginPath}>Connexion</Link>
                       <Link className="btn-primary" to={registerPath}>Inscription</Link>
                     </>
                   )}
@@ -128,7 +134,7 @@ export default function ClientLayout() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 rounded-[1.8rem] border border-white/10 bg-white/6 p-4 backdrop-blur md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-4 rounded-card-secondary border border-white/10 bg-white/5 p-4 backdrop-blur md:flex-row md:items-center md:justify-between">
               <nav className="flex flex-wrap items-center gap-2">
                 <NavLink to={homePath} className={navClass}>
                   <Compass size={16} />
@@ -144,7 +150,7 @@ export default function ClientLayout() {
                 </NavLink>
               </nav>
 
-              <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-white/62">
+              <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/62">
                 {activeAgency?.city ? `${activeAgency.city}, ${activeAgency.country || "Maroc"}` : "Experience premium de location"}
               </div>
             </div>
@@ -153,7 +159,9 @@ export default function ClientLayout() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 lg:px-6 lg:py-10">
-        <Outlet />
+        <motion.div key={location.pathname} {...pageTransition}>
+          <Outlet />
+        </motion.div>
       </main>
     </div>
   );

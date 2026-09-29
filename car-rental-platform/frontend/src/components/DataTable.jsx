@@ -1,32 +1,49 @@
-export default function DataTable({ columns = [], rows = [] }) {
+import EmptyState from "./ui/EmptyState";
+import { SkeletonRows } from "./ui/Skeleton";
+
+// Same API as before (columns / rows / render). Optional: loading, emptyTitle, emptyDescription.
+export default function DataTable({
+  columns = [],
+  rows = [],
+  loading = false,
+  emptyTitle = "Aucune donnee a afficher",
+  emptyDescription,
+  bare = false
+}) {
   const safeRows = Array.isArray(rows) ? rows : [];
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-white shadow-soft">
+    <div className={bare ? "overflow-hidden" : "overflow-hidden rounded-card-secondary border bg-white shadow-soft"} style={bare ? undefined : { borderColor: "var(--line-color)" }}>
       <div className="overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-left text-slate-500">
+        <table className="data-table min-w-full text-sm">
+          <thead>
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className="px-5 py-4 font-medium">{column.label}</th>
+                <th key={column.key}>{column.label}</th>
               ))}
             </tr>
           </thead>
-          <tbody>
-            {safeRows.length > 0 ? (
+          <tbody className="divide-y" style={{ borderColor: "var(--line-color)" }}>
+            {loading && safeRows.length === 0 ? (
+              <tr>
+                <td colSpan={Math.max(columns.length, 1)} className="!p-0">
+                  <SkeletonRows columns={Math.min(Math.max(columns.length - 1, 2), 4)} />
+                </td>
+              </tr>
+            ) : safeRows.length > 0 ? (
               safeRows.map((row, index) => (
-                <tr key={row.id || index} className="border-t border-slate-100">
+                <tr key={row.id || index}>
                   {columns.map((column) => (
-                    <td key={column.key} className="px-5 py-4 align-top text-slate-700">
+                    <td key={column.key}>
                       {column.render ? column.render(row) : row[column.key]}
                     </td>
                   ))}
                 </tr>
               ))
             ) : (
-              <tr className="border-t border-slate-100">
-                <td colSpan={Math.max(columns.length, 1)} className="px-5 py-8 text-center text-slate-500">
-                  Aucune donnée à afficher.
+              <tr>
+                <td colSpan={Math.max(columns.length, 1)} className="!p-0">
+                  <EmptyState compact title={emptyTitle} description={emptyDescription} />
                 </td>
               </tr>
             )}

@@ -61,7 +61,7 @@ export default function SuperAdminAuditLogsPage() {
           onChange={setSelectedAgencyId}
           helper="Laissez vide pour tout le reseau ou ciblez une agence particuliere."
         />
-        <div className="rounded-[1.6rem] border border-slate-200 bg-white/85 p-5 shadow-sm">
+        <div className="rounded-card-secondary border border-slate-200 bg-white/85 p-5 shadow-sm">
           <label className="relative block">
             <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input className="input pl-11" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Rechercher une action, un utilisateur ou une entite..." />

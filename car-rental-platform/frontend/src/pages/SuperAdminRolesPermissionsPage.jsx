@@ -209,7 +209,7 @@ export default function SuperAdminRolesPermissionsPage() {
             </div>
 
             <div className="space-y-8 p-6">
-              <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50 p-5">
+              <div className="rounded-card-secondary border border-slate-200 bg-slate-50 p-5">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-slate-900">Identite du role</h3>
                   <p className="mt-1 text-sm text-slate-500">Definissez un nom lisible, un code stable et une description metier.</p>

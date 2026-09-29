@@ -18,7 +18,7 @@ function Field({ label, hint, children }) {
 
 function MetricCard({ label, value, hint }) {
   return (
-    <div className="rounded-[1.6rem] border border-slate-200 bg-white/80 p-5 shadow-sm">
+    <div className="rounded-card-secondary border border-slate-200 bg-white/80 p-5 shadow-sm">
       <p className="text-sm font-medium text-slate-500">{label}</p>
       <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{value}</p>
       <p className="mt-2 text-sm text-slate-500">{hint}</p>
@@ -324,7 +324,7 @@ export default function SuperAdminVisualSettingsPage() {
 
             <div className="space-y-5 p-6">
               <div
-                className="relative overflow-hidden rounded-[2rem] p-6 text-white"
+                className="relative overflow-hidden rounded-card-primary p-6 text-white"
                 style={{ background: `linear-gradient(135deg, ${preview.primaryColor} 0%, ${preview.secondaryColor} 100%)` }}
               >
                 {preview.coverImageUrl ? <div className="absolute inset-0 bg-cover bg-center opacity-25" style={{ backgroundImage: `url(${preview.coverImageUrl})` }} /> : null}

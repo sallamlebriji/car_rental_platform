@@ -6,7 +6,7 @@ export default function AgencyScopeSelector({
   helper = "Choisissez l'agence sur laquelle appliquer ces reglages."
 }) {
   return (
-    <div className="rounded-[1.6rem] border border-slate-200 bg-white/85 p-5 shadow-sm">
+    <div className="rounded-card-secondary border border-slate-200 bg-white/85 p-5 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>

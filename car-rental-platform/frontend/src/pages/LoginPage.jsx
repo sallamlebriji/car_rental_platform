@@ -44,9 +44,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
+    <div className="mx-auto max-w-5xl rounded-card-primary border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
       <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-        <div className="rounded-[1.8rem] bg-slate-950 p-8 text-white">
+        <div className="rounded-card-secondary bg-slate-950 p-8 text-white">
           <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
             Espace client
           </span>
@@ -61,7 +61,7 @@ export default function LoginPage() {
               <p className="mt-1 text-sm text-slate-300">Ce client ne voit que le catalogue et les reservations de cette agence.</p>
             </div>
           ) : null}
-          <div className="mt-8 rounded-[1.6rem] bg-white/5 p-5">
+          <div className="mt-8 rounded-card-secondary bg-white/5 p-5">
             <p className="text-sm text-slate-300">Vous n'avez pas encore de compte ?</p>
             <Link className="mt-3 inline-flex rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950" to={slug ? registerPath : (agencyFromQuery ? `/register?agency=${agencyFromQuery}` : "/register")}>
               Creer mon compte client

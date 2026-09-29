@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { CarFront, Fuel, Users, Settings2 } from "lucide-react";
 import { useThemeSettings } from "../context/ThemeContext";
 import { currency } from "../utils/format";
+import TiltCard from "./ui/TiltCard";
 
 export default function CarCard({ car }) {
   const { buildClientPath } = useThemeSettings();
@@ -9,7 +10,8 @@ export default function CarCard({ car }) {
   const detailsPath = buildClientPath(`/cars/${car.id}`);
 
   return (
-    <article className="group overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-[0_24px_65px_rgba(15,23,42,0.09)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:shadow-[0_34px_90px_rgba(15,23,42,0.14)]">
+    <TiltCard>
+    <article className="group overflow-hidden rounded-card-primary border border-white/70 bg-white/90 shadow-soft backdrop-blur transition duration-300 hover:shadow-lift">
       <div className="relative overflow-hidden">
         <img src={image} alt={`${car.brand} ${car.model}`} className="h-64 w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
         <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-950/55 via-slate-950/10 to-transparent" />
@@ -64,5 +66,6 @@ export default function CarCard({ car }) {
         <Link className="btn-primary w-full" to={detailsPath}>Voir le vehicule</Link>
       </div>
     </article>
+    </TiltCard>
   );
 }

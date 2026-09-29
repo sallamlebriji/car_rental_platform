@@ -13,7 +13,7 @@ import { date } from "../utils/format";
 
 function ContractMetricCard({ icon: Icon, label, value, hint, tone }) {
   return (
-    <div className="overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white/90 shadow-soft backdrop-blur">
+    <div className="overflow-hidden rounded-card-secondary border border-slate-200 bg-white/90 shadow-soft backdrop-blur">
       <div className={`h-1.5 bg-gradient-to-r ${tone}`} />
       <div className="space-y-4 p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

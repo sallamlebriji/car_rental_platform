@@ -40,9 +40,9 @@ export default function AgencyLoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
+    <div className="mx-auto max-w-5xl rounded-card-primary border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
       <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
-        <div className="rounded-[1.8rem] bg-slate-950 p-8 text-white">
+        <div className="rounded-card-secondary bg-slate-950 p-8 text-white">
           <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
             Espace agence
           </span>

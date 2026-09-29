@@ -59,7 +59,7 @@ export default function SuperAdminReservationSettingsPage() {
 
         <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-5">
           {numericFields.map((field) => (
-            <div key={field.key} className="rounded-[1.6rem] border border-slate-200 bg-slate-50 p-5">
+            <div key={field.key} className="rounded-card-secondary border border-slate-200 bg-slate-50 p-5">
               <p className="text-sm font-medium text-slate-500">{field.label}</p>
               <div className="mt-4 flex items-end justify-between gap-3">
                 <span className="text-4xl font-semibold text-slate-900">{reservation[field.key] || 0}</span>

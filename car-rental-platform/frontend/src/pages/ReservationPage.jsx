@@ -57,7 +57,7 @@ function UploadCard({ label, document, onChange, onClear, uploading, hint }) {
   const hasDocument = Boolean(document?.url);
 
   return (
-    <div className="rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-soft">
+    <div className="rounded-card-secondary border border-slate-200 bg-white p-4 shadow-soft">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-slate-800">{label}</p>
@@ -333,7 +333,7 @@ export default function ReservationPage() {
             />
           </div>
         ) : (
-          <div className="rounded-[1.6rem] border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 md:col-span-2">
+          <div className="rounded-card-secondary border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 md:col-span-2">
             <div className="flex items-start gap-3">
               <ShieldCheck size={18} className="mt-0.5" />
               <p>L'agence a desactive l'import direct des documents. Vous pourrez les transmettre apres validation ou a la remise du vehicule.</p>

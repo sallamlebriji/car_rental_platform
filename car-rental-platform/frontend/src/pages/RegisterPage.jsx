@@ -79,9 +79,9 @@ export default function RegisterPage() {
 
   return (
     <div className="space-y-8">
-      <div className="mx-auto max-w-6xl rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
+      <div className="mx-auto max-w-6xl rounded-card-primary border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="rounded-[1.8rem] bg-slate-950 p-8 text-white">
+          <div className="rounded-card-secondary bg-slate-950 p-8 text-white">
             <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
               Inscription client
             </span>
@@ -106,7 +106,7 @@ export default function RegisterPage() {
             </div>
 
             {selectedAgency ? (
-              <div className="mt-8 rounded-[1.6rem] bg-white/5 p-5">
+              <div className="mt-8 rounded-card-secondary bg-white/5 p-5">
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Agence rattachee</p>
                 <h2 className="mt-3 text-2xl font-semibold">{selectedAgency.name}</h2>
                 <p className="mt-2 text-sm text-slate-300">

@@ -1,15 +1,18 @@
+import { motion } from "framer-motion";
+import { Item, Stagger } from "./ui/Reveal";
+
 export function HeroMetric({ label, value, hint, icon: Icon }) {
   return (
-    <div className="rounded-[1.8rem] bg-white/6 p-5 backdrop-blur">
+    <div className="rounded-2xl bg-white/[0.05] p-4 ring-1 ring-inset ring-white/[0.07] transition-colors duration-calm ease-calm hover:bg-white/[0.08]">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-slate-300">{label}</p>
-          <h3 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">{value}</h3>
-          {hint ? <p className="mt-3 text-sm leading-relaxed text-slate-400">{hint}</p> : null}
+          <p className="text-xs font-medium text-slate-400">{label}</p>
+          <h3 className="mt-2 break-words font-display text-2xl font-semibold tracking-tight text-white">{value}</h3>
+          {hint ? <p className="mt-2 text-xs leading-relaxed text-slate-500">{hint}</p> : null}
         </div>
         {Icon ? (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
-            <Icon size={22} />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white">
+            <Icon size={16} />
           </div>
         ) : null}
       </div>
@@ -17,42 +20,35 @@ export function HeroMetric({ label, value, hint, icon: Icon }) {
   );
 }
 
-export default function ControlCenterHero({
-  badge,
-  title,
-  description,
-  metrics = [],
-  tone = "super"
-}) {
-  const background =
-    tone === "admin"
-      ? "bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.08),transparent_28%)]"
-      : "bg-[radial-gradient(circle_at_top_right,rgba(45,212,191,0.22),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.18),transparent_30%)]";
-
+// Calm page hero for settings / control pages. `tone` kept for API compatibility.
+export default function ControlCenterHero({ badge, title, description, metrics = [] }) {
   return (
-    <section className="relative overflow-hidden rounded-[2.2rem] bg-slate-950 px-7 py-8 text-white shadow-soft">
-      <div className={`absolute inset-0 ${background}`} />
-      <div className={`relative grid gap-6 ${metrics.length ? "xl:grid-cols-[1.1fr_0.9fr]" : ""} xl:items-start`}>
-        <div className="space-y-5">
+    <section className="card-primary">
+      <div
+        className="anim-breathe pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full"
+        style={{ background: "radial-gradient(circle, color-mix(in srgb, var(--primary-color) 38%, transparent), transparent 70%)" }}
+      />
+      <Stagger className={`relative grid gap-6 p-6 md:p-8 ${metrics.length ? "xl:grid-cols-[1.1fr_0.9fr]" : ""} xl:items-center`} stagger={0.1}>
+        <div className="space-y-4">
           {badge ? (
-            <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
+            <Item as="span" className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
               {badge}
-            </span>
+            </Item>
           ) : null}
-          <div>
-            <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">{title}</h1>
-            {description ? <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">{description}</p> : null}
-          </div>
+          <Item>
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-white md:text-4xl">{title}</h1>
+            {description ? <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400 md:text-base">{description}</p> : null}
+          </Item>
         </div>
 
         {metrics.length ? (
-          <div className={`grid gap-4 ${metrics.length > 2 ? "sm:grid-cols-2 xl:grid-cols-2" : "sm:grid-cols-2"}`}>
+          <Item className="grid gap-3 sm:grid-cols-2">
             {metrics.map((metric) => (
               <HeroMetric key={metric.label} {...metric} />
             ))}
-          </div>
+          </Item>
         ) : null}
-      </div>
+      </Stagger>
     </section>
   );
 }

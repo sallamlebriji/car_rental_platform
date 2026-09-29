@@ -195,7 +195,7 @@ export default function SuperAdminAgencySettingsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-6 text-white shadow-soft lg:px-8">
+      <section className="relative overflow-hidden rounded-card-primary bg-slate-950 px-6 py-6 text-white shadow-soft lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(45,212,191,0.24),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(251,146,60,0.22),transparent_30%)]" />
         <div className="relative grid gap-6 xl:grid-cols-[1.35fr_0.95fr] xl:items-start">
           <div className="space-y-5">
@@ -211,7 +211,7 @@ export default function SuperAdminAgencySettingsPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {statCards.map((card) => (
-              <div key={card.label} className={`rounded-[1.6rem] bg-gradient-to-br ${card.tone} p-[1px]`}>
+              <div key={card.label} className={`rounded-card-secondary bg-gradient-to-br ${card.tone} p-[1px]`}>
                 <div className="rounded-[1.55rem] bg-slate-950/80 px-5 py-5 backdrop-blur">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
@@ -291,7 +291,7 @@ export default function SuperAdminAgencySettingsPage() {
 
         <section className="space-y-6">
           <div className="sticky top-6 space-y-6">
-            <div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white shadow-soft">
+            <div className="overflow-hidden rounded-card-primary bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white shadow-soft">
               <div className="space-y-5 p-6">
                 <div className="flex items-center justify-between">
                   <span className="rounded-full border border-white/15 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
@@ -301,7 +301,7 @@ export default function SuperAdminAgencySettingsPage() {
                     {form.isActive ? "Active" : "Inactive"}
                   </span>
                 </div>
-                <div className="rounded-[1.6rem] bg-white/5 p-5">
+                <div className="rounded-card-secondary bg-white/5 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h3 className="text-2xl font-semibold">{previewName}</h3>

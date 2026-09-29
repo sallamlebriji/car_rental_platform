@@ -285,7 +285,7 @@ export default function AdminSettingsPage() {
             </Field>
           </div>
 
-          <div className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-5">
+          <div className="rounded-card-secondary border border-slate-200 bg-slate-50 p-5">
             <div className="flex items-start gap-3">
               <div className="rounded-2xl bg-white p-3 text-slate-600">
                 <Eye size={18} />
@@ -293,7 +293,7 @@ export default function AdminSettingsPage() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">Apercu rapide</p>
                 <div
-                  className="mt-4 overflow-hidden rounded-[1.6rem] p-5 text-white"
+                  className="mt-4 overflow-hidden rounded-card-secondary p-5 text-white"
                   style={{ background: `linear-gradient(135deg, ${visualForm.primaryColor || "#0f766e"} 0%, ${visualForm.secondaryColor || "#f59e0b"} 100%)` }}
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-white/80">Accueil client</p>

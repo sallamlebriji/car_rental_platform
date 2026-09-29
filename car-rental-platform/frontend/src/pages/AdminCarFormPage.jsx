@@ -62,7 +62,7 @@ function Field({ label, icon: Icon, hint, children }) {
 
 function PreviewMetric({ label, value }) {
   return (
-    <div className="rounded-2xl bg-white/6 p-4">
+    <div className="rounded-2xl bg-white/5 p-4">
       <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{label}</p>
       <p className="mt-2 text-xl font-semibold text-white">{value}</p>
     </div>
@@ -352,7 +352,7 @@ export default function AdminCarFormPage() {
             </div>
 
             <div className="grid gap-5 p-6">
-              <label className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center transition hover:border-slate-400 hover:bg-slate-100">
+              <label className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-card-secondary border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center transition hover:border-slate-400 hover:bg-slate-100">
                 <Upload size={24} className="text-slate-400" />
                 <span className="mt-3 text-sm font-medium text-slate-700">
                   Ajouter une ou plusieurs images
@@ -370,7 +370,7 @@ export default function AdminCarFormPage() {
               {galleryImages.length ? (
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {galleryImages.map((image, index) => (
-                    <div key={image.id} className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white">
+                    <div key={image.id} className="overflow-hidden rounded-card-secondary border border-slate-200 bg-white">
                       <img src={image.url} alt={`Vehicule ${index + 1}`} className="h-44 w-full object-cover" />
                       <div className="flex items-center justify-between px-4 py-3">
                         <div>
@@ -393,7 +393,7 @@ export default function AdminCarFormPage() {
                   ))}
                 </div>
               ) : (
-                <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50 px-5 py-6 text-sm text-slate-500">
+                <div className="rounded-card-secondary border border-slate-200 bg-slate-50 px-5 py-6 text-sm text-slate-500">
                   Aucune image selectionnee pour le moment.
                 </div>
               )}
@@ -411,7 +411,7 @@ export default function AdminCarFormPage() {
             </div>
 
             <div className="space-y-6 p-6">
-              <div className="overflow-hidden rounded-[2rem] bg-slate-950 text-white">
+              <div className="overflow-hidden rounded-card-primary bg-slate-950 text-white">
                 <img src={coverImage} alt={displayName} className="h-64 w-full object-cover" />
                 <div className="space-y-5 p-6">
                   <div className="flex items-start justify-between gap-4">
@@ -432,7 +432,7 @@ export default function AdminCarFormPage() {
                 </div>
               </div>
 
-              <div className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-5">
+              <div className="rounded-card-secondary border border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold text-slate-800">Resume technique</p>
                 <div className="mt-4 grid gap-3 text-sm text-slate-600">
                   <p><strong>Carburant:</strong> {form.fuelType}</p>
@@ -442,7 +442,7 @@ export default function AdminCarFormPage() {
                 </div>
               </div>
 
-              <div className="rounded-[1.8rem] border border-dashed border-slate-200 bg-white p-5">
+              <div className="rounded-card-secondary border border-dashed border-slate-200 bg-white p-5">
                 <p className="text-sm font-semibold text-slate-800">Validation</p>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">
                   Verifiez les images, le prix, la caution et le statut avant publication dans la flotte.

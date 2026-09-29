@@ -20,7 +20,7 @@ export default function CarsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2.2rem] border border-white/70 bg-white/88 p-6 shadow-[0_24px_65px_rgba(15,23,42,0.08)] backdrop-blur md:p-7">
+      <section className="rounded-card-primary border border-white/70 bg-white/88 p-6 shadow-soft backdrop-blur md:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-500">
@@ -52,7 +52,7 @@ export default function CarsPage() {
       {loading ? (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="h-[28rem] rounded-[2rem] bg-white/80 shadow-soft animate-pulse" />
+            <div key={index} className="h-[28rem] rounded-card-primary bg-white/80 shadow-soft animate-pulse" />
           ))}
         </div>
       ) : (

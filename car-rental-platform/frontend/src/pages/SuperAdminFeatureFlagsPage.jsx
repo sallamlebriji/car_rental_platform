@@ -63,7 +63,7 @@ export default function SuperAdminFeatureFlagsPage() {
         </div>
         <div className="grid gap-4 p-6 md:grid-cols-2">
           {featureCatalog.map(([key, label, hint]) => (
-            <label key={key} className="flex items-center justify-between gap-4 rounded-[1.6rem] border border-slate-200 bg-slate-50 px-5 py-4">
+            <label key={key} className="flex items-center justify-between gap-4 rounded-card-secondary border border-slate-200 bg-slate-50 px-5 py-4">
               <div>
                 <p className="font-medium text-slate-900">{label}</p>
                 <p className="text-sm text-slate-500">{hint}</p>
