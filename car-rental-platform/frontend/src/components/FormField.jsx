@@ -1,7 +1,7 @@
 export default function FormField({ label, children }) {
   return (
-    <label className="space-y-2">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
+    <label className="block space-y-1.5">
+      <span className="block text-[0.8rem] font-medium text-slate-600">{label}</span>
       {children}
     </label>
   );

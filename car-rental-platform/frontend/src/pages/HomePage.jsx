@@ -1,11 +1,8 @@
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  BadgeDollarSign,
-  Building2,
   CalendarClock,
   CarFront,
-  CheckCircle2,
   Clock3,
   Globe2,
   MapPinned,
@@ -13,7 +10,6 @@ import {
   PackageCheck,
   PhoneCall,
   ShieldCheck,
-  Sparkles,
   Users
 } from "lucide-react";
 import { useFetch } from "../hooks/useFetch";
@@ -21,68 +17,38 @@ import { useThemeSettings } from "../context/ThemeContext";
 import CarCard from "../components/CarCard";
 import SplitWords from "../components/ui/SplitWords";
 import Parallax from "../components/ui/Parallax";
-import { Cube } from "../components/ui/EmptyState";
+import CountUp from "../components/ui/CountUp";
+import EmptyState from "../components/ui/EmptyState";
+import LiveBookingMockup from "../components/client/LiveBookingMockup";
 import { Item, Reveal, Stagger } from "../components/ui/Reveal";
 
-function StatCard({ label, value, hint }) {
+function SectionHeading({ eyebrow, title, description, action }) {
   return (
-    <div className="rounded-card-secondary border border-slate-200/80 bg-white/90 p-5 shadow-soft">
-      <p className="text-[11px] uppercase tracking-[0.24em] text-slate-400">{label}</p>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{value}</p>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">{hint}</p>
-    </div>
-  );
-}
-
-function EditorialFeature({ icon: Icon, title, description }) {
-  return (
-    <div className="rounded-card-secondary border border-slate-200/80 bg-white/90 p-6 shadow-soft">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
-        <Icon size={20} />
+    <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="max-w-2xl">
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-slate-900 md:text-[2.6rem] md:leading-[1.1]">{title}</h2>
+        {description ? <p className="mt-4 text-base leading-relaxed text-slate-500">{description}</p> : null}
       </div>
-      <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-slate-600">{description}</p>
+      {action}
     </div>
-  );
-}
-
-function AccessCard({ icon: Icon, title, description, to, tone = "dark" }) {
-  const classes = tone === "dark"
-    ? "border-white/10 bg-white/10 text-white hover:bg-white/15"
-    : "border-slate-200 bg-white text-slate-950 hover:border-slate-300 hover:shadow-soft";
-
-  return (
-    <Link
-      to={to}
-      className={`group rounded-card-secondary border p-5 transition ${classes}`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${tone === "dark" ? "bg-white/10" : "bg-slate-100"}`}>
-          <Icon size={18} />
-        </div>
-        <ArrowRight size={16} className="opacity-50 transition group-hover:translate-x-1 group-hover:opacity-100" />
-      </div>
-      <h3 className="mt-5 text-lg font-semibold">{title}</h3>
-      <p className={`mt-2 text-sm leading-relaxed ${tone === "dark" ? "text-white/70" : "text-slate-600"}`}>{description}</p>
-    </Link>
   );
 }
 
 function ContactRow({ icon: Icon, label, value, href }) {
   const content = (
-    <div className="flex items-center gap-4 rounded-[1.45rem] border border-slate-200 bg-white px-4 py-4 transition hover:-translate-y-0.5 hover:shadow-soft">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white">
-        <Icon size={18} />
-      </div>
+    <div className="group flex items-center gap-4 rounded-2xl px-4 py-3.5 transition-colors duration-calm ease-calm hover:bg-white/5">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white">
+        <Icon size={17} />
+      </span>
       <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-slate-400">{label}</p>
-        <p className="mt-1 truncate text-sm font-semibold text-slate-900">{value}</p>
+        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-white/40">{label}</p>
+        <p className="mt-0.5 truncate text-sm font-medium text-white">{value}</p>
       </div>
     </div>
   );
 
   if (!href) return content;
-
   return <a href={href} target="_blank" rel="noreferrer">{content}</a>;
 }
 
@@ -99,6 +65,7 @@ export default function HomePage() {
   const activeCars = carRows.filter((car) => car.status === "AVAILABLE");
   const brandList = [...new Set(carRows.map((car) => car.brand).filter(Boolean))];
   const uniqueBrands = brandList.length;
+  const lowestPrice = carRows.length ? Math.min(...carRows.map((car) => Number(car.pricePerDay || 0)).filter((price) => price > 0)) : 0;
   const agencyName = settings.agency?.agencyName || settings.activeAgency?.name || "Plateforme";
   const slogan = settings.agency?.slogan || "Location de voitures haut de gamme";
   const coverImage = settings.visual?.coverImageUrl || settings.activeAgency?.coverImageUrl || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80";
@@ -108,224 +75,221 @@ export default function HomePage() {
   const whatsapp = settings.agency?.whatsapp;
   const website = settings.agency?.website;
   const address = [settings.agency?.address, settings.activeAgency?.city || settings.agency?.city, settings.activeAgency?.country || settings.agency?.country].filter(Boolean).join(", ");
+  const featured = (activeCars.length ? activeCars : carRows).slice(0, 3);
 
   return (
-    <div className="space-y-12">
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(380px,0.85fr)]">
-        <div className="relative overflow-hidden rounded-card-primary bg-slate-950 text-white shadow-soft">
-          <Parallax className="absolute inset-x-0 -inset-y-[10%]" amount={8}>
-            <img src={coverImage} alt={agencyName} className="h-full w-full object-cover opacity-30" />
-          </Parallax>
-          <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.95)_4%,rgba(2,6,23,0.78)_42%,rgba(2,6,23,0.76)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.12),transparent_18%),radial-gradient(circle_at_80%_12%,rgba(45,212,191,0.12),transparent_22%)]" />
+    <div className="overflow-x-clip">
+      {/* ---------- Hero ---------- */}
+      <section className="relative isolate flex min-h-[92vh] items-end overflow-hidden bg-ink-950 text-white">
+        <Parallax className="absolute inset-x-0 -top-[6%] bottom-[-12%] -z-10" amount={10}>
+          <img src={coverImage} alt="" className="h-full w-full scale-105 object-cover opacity-60" />
+        </Parallax>
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,11,20,0.55)_0%,rgba(7,11,20,0.25)_35%,rgba(7,11,20,0.92)_100%)]" />
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ background: "radial-gradient(50rem 30rem at 15% 100%, color-mix(in srgb, var(--primary-color) 30%, transparent), transparent 70%)" }}
+        />
 
-          <div className="pointer-events-none absolute right-10 top-10 hidden anim-float lg:block" aria-hidden="true">
-            <Cube size={64} />
-          </div>
-          <div className="pointer-events-none absolute bottom-5 right-8 hidden h-9 w-5 justify-center overflow-hidden rounded-full border border-white/20 lg:flex" aria-hidden="true">
-            <span className="anim-scroll-cue mt-1 h-2 w-0.5 rounded-full bg-white/70" />
-          </div>
-          <div className="relative flex h-full flex-col justify-between gap-8 px-6 py-8 md:px-8 md:py-10">
-            <div className="space-y-6">
-              <div className="inline-flex rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-white/72">
-                {settings.isPortalScoped ? "Portail agence dedie" : "Showroom premium"}
-              </div>
+        <div className="mx-auto w-full max-w-7xl px-4 pb-10 pt-36 lg:px-8 lg:pb-14">
+          <Stagger className="max-w-3xl" stagger={0.12} delay={0.1}>
+            <Item as="p" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-white/80 backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full anim-pulse-dot" style={{ background: "var(--primary-color)", color: "var(--primary-color)" }} />
+              {settings.isPortalScoped ? `Portail officiel · ${agencyName}` : `${agencyName} · ${slogan}`}
+            </Item>
+          </Stagger>
 
-              <div className="space-y-4">
-                <p className="text-sm uppercase tracking-[0.28em] text-white/55">{slogan}</p>
-                <SplitWords text={agencyName} className="max-w-3xl font-display text-4xl font-semibold leading-[1] tracking-tight sm:text-5xl xl:text-[4.5rem]" />
-                <p className="max-w-2xl text-lg font-medium leading-relaxed text-white/92 sm:text-[1.35rem]">
-                  Une vitrine sobre, un parc dedie et un parcours de location vraiment professionnel.
+          <SplitWords
+            text="La bonne voiture, au bon moment."
+            delay={0.25}
+            className="mt-6 max-w-4xl font-display text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.03em] sm:text-6xl lg:text-[5.2rem]"
+          />
+
+          <Stagger className="mt-6 max-w-2xl" stagger={0.12} delay={0.7}>
+            <Item as="p" className="text-base leading-relaxed text-white/75 md:text-lg">{heroCopy}</Item>
+            <Item className="mt-8 flex flex-wrap gap-3">
+              <Link className="btn-primary gap-2 !px-6 !py-3.5 !text-[0.95rem]" to={carsPath}>
+                {primaryButtonText}
+                <ArrowRight size={17} />
+              </Link>
+              <Link className="btn-secondary !border-white/20 !bg-white/10 !px-6 !py-3.5 !text-[0.95rem] !text-white backdrop-blur hover:!bg-white/15" to={reservationsPath}>
+                Suivre ma reservation
+              </Link>
+            </Item>
+          </Stagger>
+
+          <Reveal delay={1} className="mt-14 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-md md:max-w-2xl">
+            {[
+              ["Vehicules disponibles", activeCars.length || carRows.length, (n) => Math.round(n)],
+              ["Marques", uniqueBrands, (n) => Math.round(n)],
+              ["A partir de", Number.isFinite(lowestPrice) ? lowestPrice : 0, (n) => `${Math.round(n)} MAD`]
+            ].map(([label, value, format]) => (
+              <div key={label} className="px-4 py-4 md:px-6">
+                <p className="font-display text-xl font-bold tracking-tight md:text-3xl">
+                  <CountUp value={value} format={format} />
                 </p>
-                <p className="max-w-2xl text-sm leading-7 text-white/74 sm:text-base">
-                  {heroCopy}
-                </p>
+                <p className="mt-1 text-[0.7rem] text-white/55 md:text-xs">{label}</p>
               </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Link className="btn-primary gap-2" to={carsPath}>
-                  {primaryButtonText}
-                  <ArrowRight size={16} />
-                </Link>
-                <Link className="btn-secondary border-white/15 bg-white/10 text-white hover:bg-white/15" to={registerPath}>
-                  Creer mon compte client
-                </Link>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-card-secondary border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-white/50">Vehicules visibles</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{activeCars.length || carRows.length || 0}</p>
-              </div>
-              <div className="rounded-card-secondary border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-white/50">Marques</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{uniqueBrands || 1}</p>
-              </div>
-              <div className="rounded-card-secondary border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-white/50">Parcours client</p>
-                <p className="mt-2 text-3xl font-semibold text-white">1 portail</p>
-              </div>
-            </div>
-          </div>
+            ))}
+          </Reveal>
         </div>
 
-        <div className="grid gap-6">
-          <div className="rounded-card-primary border border-slate-200/80 bg-white/95 p-6 shadow-soft">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.28em] text-slate-400">Agence active</p>
-                <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">{agencyName}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                  {settings.activeAgency?.city ? `${settings.activeAgency.city}, ${settings.activeAgency.country || "Maroc"}` : "Portail local agence"}
-                </p>
-              </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-soft">
-                {settings.agency?.logoUrl ? (
-                  <img src={settings.agency.logoUrl} alt={agencyName} className="h-12 w-12 rounded-2xl bg-white object-cover p-2" />
-                ) : (
-                  <Building2 size={24} />
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-3">
-              <AccessCard
-                icon={Users}
-                title="Connexion client"
-                description="Le locataire se connecte et reserve uniquement dans l'environnement de cette agence."
-                to={loginPath}
-                tone="light"
-              />
-              <AccessCard
-                icon={ShieldCheck}
-                title="Connexion agence"
-                description="Admins et employes retrouvent le back-office propre a cette meme agence."
-                to={agencyLoginPath}
-                tone="light"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <StatCard label="Positionnement" value="Premium local" hint="Presentation plus elegante, service plus direct et lecture plus rassurante des offres." />
-            <StatCard label="Acces rapide" value="Client & agence" hint="Deux points d'entree clairs pour le client d'un cote, l'equipe de l'agence de l'autre." />
-          </div>
+        <div className="pointer-events-none absolute bottom-8 right-8 hidden h-10 w-6 justify-center overflow-hidden rounded-full border border-white/25 lg:flex" aria-hidden="true">
+          <span className="anim-scroll-cue mt-1.5 h-2.5 w-[3px] rounded-full bg-white/80" />
         </div>
       </section>
 
-      <Stagger as="section" className="grid gap-5 lg:grid-cols-3">
-        <Item><EditorialFeature icon={ShieldCheck} title="Reservation securisee" description="Chaque demande reste rattachee a la bonne agence, avec un parcours de confirmation plus fiable et plus net." /></Item>
-        <Item><EditorialFeature icon={PackageCheck} title="Offres bien presentees" description="Packs, options, conditions et tarifs sont mis en scene dans une interface plus professionnelle." /></Item>
-        <Item><EditorialFeature icon={Clock3} title="Suivi client simplifie" description="Le client retrouve ses reservations, ses documents et son historique dans un espace plus clair." /></Item>
-      </Stagger>
-
-      {uniqueBrands > 0 ? (
-        <Reveal className="overflow-hidden border-y py-5" style={{ borderColor: "var(--line-color)" }} aria-hidden="true">
-          <div className="anim-marquee flex w-max gap-12 whitespace-nowrap">
-            {[0, 1].map((copy) => (
-              <div key={copy} className="flex gap-12">
-                {brandList.map((brand, index) => (
-                  <span key={`${brand}-${index}`} className="font-display text-2xl font-semibold tracking-tight text-slate-300">{brand}</span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      ) : null}
-
-
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
-        <div className="space-y-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <span className="inline-flex rounded-full border border-slate-200 bg-white/75 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                Selection du moment
-              </span>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">Voitures disponibles</h2>
-              <p className="mt-2 text-slate-500">
-                Une selection actuelle pour {agencyName}.
-              </p>
-            </div>
-            <Link to={carsPath} className="btn-secondary gap-2">
-              Voir tout le parc
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+      <div className="mx-auto max-w-7xl space-y-28 px-4 py-24 lg:px-8">
+        {/* ---------- Selection ---------- */}
+        <section className="space-y-10">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Selection du moment"
+              title="Des vehicules prets a partir"
+              description={`Une selection du parc de ${agencyName}, entretenue et preparee pour vos trajets.`}
+              action={
+                <Link to={carsPath} className="btn-secondary shrink-0 gap-2">
+                  Voir tout le parc
+                  <ArrowRight size={16} />
+                </Link>
+              }
+            />
+          </Reveal>
 
           {loading ? (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="skeleton h-[28rem] rounded-card-primary" />
+                <div key={index} className="overflow-hidden rounded-card-primary border border-slate-900/[0.06] bg-white">
+                  <div className="skeleton aspect-[16/10] !rounded-none" />
+                  <div className="space-y-3 p-5">
+                    <div className="skeleton h-5 w-2/3" />
+                    <div className="skeleton h-3 w-1/3" />
+                    <div className="skeleton mt-6 h-6 w-1/2" />
+                  </div>
+                </div>
               ))}
             </div>
+          ) : featured.length ? (
+            <Stagger className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featured.map((car) => (
+                <Item key={car.id} className="h-full">
+                  <CarCard car={car} />
+                </Item>
+              ))}
+            </Stagger>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {carRows.slice(0, 3).map((car) => <CarCard key={car.id} car={car} />)}
+            <div className="rounded-card-primary border border-slate-900/[0.06] bg-white">
+              <EmptyState title="Le parc arrive bientot" description="Aucun vehicule n'est encore publie pour cette agence. Revenez tres vite." />
             </div>
           )}
-        </div>
+        </section>
 
-        <div className="space-y-6">
-          <div className="rounded-card-primary border border-slate-200/80 bg-[#f7f3ec] p-6 shadow-soft">
-            <div>
-              <span className="inline-flex rounded-full border border-slate-300 bg-white/70 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                Contact agence
+        {/* ---------- How it works ---------- */}
+        <section className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-10">
+            <Reveal>
+              <SectionHeading
+                eyebrow="Comment ca marche"
+                title="Reserver en trois etapes, sans friction"
+                description="Un parcours clair du choix du vehicule jusqu'a la confirmation par l'agence."
+              />
+            </Reveal>
+            <Stagger className="space-y-2">
+              {[
+                ["01", "Choisissez votre voiture", "Comparez modeles, carburant, boite et tarif journalier."],
+                ["02", "Composez votre location", "Selectionnez vos dates, un pack et les options utiles."],
+                ["03", "Recevez la confirmation", "L'agence valide votre demande, vous suivez tout depuis votre espace."]
+              ].map(([number, title, text]) => (
+                <Item key={number} className="group flex gap-5 rounded-2xl p-4 transition-colors duration-calm ease-calm hover:bg-white">
+                  <span className="font-display text-sm font-bold tabular-nums" style={{ color: "var(--primary-color)" }}>{number}</span>
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-slate-900">{title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-500">{text}</p>
+                  </div>
+                </Item>
+              ))}
+            </Stagger>
+          </div>
+          <Reveal delay={0.15}>
+            <LiveBookingMockup />
+          </Reveal>
+        </section>
+
+        {/* ---------- Promises ---------- */}
+        <Stagger as="section" className="grid gap-px overflow-hidden rounded-card-primary border border-slate-900/[0.06] bg-slate-900/[0.06] md:grid-cols-3">
+          {[
+            [ShieldCheck, "Reservation securisee", "Chaque demande reste rattachee a votre agence, avec un parcours de confirmation fiable."],
+            [PackageCheck, "Offres transparentes", "Packs, options, conditions et tarifs presentes clairement avant de valider."],
+            [Clock3, "Suivi simplifie", "Reservations, statuts et documents reunis dans votre espace client."]
+          ].map(([Icon, title, text]) => (
+            <Item key={title} className="bg-white p-8">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: "color-mix(in srgb, var(--primary-color) 10%, white)", color: "var(--primary-color)" }}>
+                <Icon size={20} />
               </span>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">Entrer directement en relation</h2>
-              <p className="mt-2 text-slate-600">
-                Informations utiles pour appeler, localiser ou ouvrir la vitrine de {agencyName}.
-              </p>
-            </div>
+              <h3 className="mt-6 font-display text-lg font-bold text-slate-900">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-500">{text}</p>
+            </Item>
+          ))}
+        </Stagger>
+      </div>
 
-            <div className="mt-6 grid gap-4">
-              {contactPhone ? (
-                <ContactRow icon={PhoneCall} label="Telephone" value={contactPhone} href={`tel:${contactPhone}`} />
-              ) : null}
-              {whatsapp ? (
-                <ContactRow icon={MessageCircle} label="WhatsApp" value={whatsapp} href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`} />
-              ) : null}
-              {website ? (
-                <ContactRow icon={Globe2} label="Site web" value={website} href={website} />
-              ) : null}
-              {address ? (
-                <ContactRow icon={MapPinned} label="Adresse" value={address} />
-              ) : null}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <AccessCard
-              icon={CalendarClock}
-              title="Mon espace client"
-              description="Retrouver mes reservations, mes statuts et mes documents."
-              to={reservationsPath}
-              tone="light"
-            />
-            <AccessCard
-              icon={CarFront}
-              title="Voir tout le parc"
-              description="Consulter toutes les voitures visibles pour cette seule agence."
-              to={carsPath}
-              tone="light"
-            />
-          </div>
-
-          <div className="rounded-card-primary border border-slate-200/80 bg-white/95 p-6 shadow-soft">
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white">
-                <CheckCircle2 size={18} />
+      {/* ---------- Brands marquee ---------- */}
+      {uniqueBrands > 0 ? (
+        <div className="overflow-hidden border-y border-slate-900/[0.06] bg-white py-8" aria-hidden="true">
+          <div className="anim-marquee flex w-max gap-16 whitespace-nowrap">
+            {[0, 1].map((copy) => (
+              <div key={copy} className="flex gap-16">
+                {[...brandList, ...brandList, ...brandList].map((brand, index) => (
+                  <span key={`${brand}-${index}`} className="font-display text-3xl font-extrabold tracking-tight text-slate-200">{brand}</span>
+                ))}
               </div>
-              <div>
-                <p className="text-lg font-semibold text-slate-950">Une presentation plus professionnelle</p>
-                <p className="mt-2 text-sm leading-7 text-slate-600">
-                  Cette vitrine est maintenant pensee comme un vrai showroom digital : plus elegante, plus lisible et mieux adaptee a une agence de location.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </section>
+      ) : null}
+
+      {/* ---------- Contact & access ---------- */}
+      <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+        <Reveal className="relative overflow-hidden rounded-[2rem] bg-ink-900 text-white shadow-deep">
+          <div
+            className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full anim-breathe"
+            style={{ background: "radial-gradient(circle, color-mix(in srgb, var(--primary-color) 40%, transparent), transparent 70%)" }}
+          />
+          <div className="relative grid gap-10 p-8 md:p-12 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">{agencyName}</p>
+              <h2 className="mt-4 max-w-lg font-display text-3xl font-bold tracking-tight md:text-[2.6rem] md:leading-[1.1]">
+                Une question avant de reserver ?
+              </h2>
+              <p className="mt-4 max-w-md text-white/60">
+                Notre equipe vous accompagne pour choisir le bon vehicule et preparer votre depart.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to={carsPath} className="btn-primary gap-2">
+                  <CarFront size={16} /> Parcourir le parc
+                </Link>
+                <Link to={registerPath} className="btn-secondary !border-white/15 !bg-white/10 !text-white hover:!bg-white/15">
+                  Creer mon compte
+                </Link>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/50">
+                <Link to={loginPath} className="inline-flex items-center gap-2 hover:text-white"><Users size={15} />Connexion client</Link>
+                <Link to={reservationsPath} className="inline-flex items-center gap-2 hover:text-white"><CalendarClock size={15} />Mes reservations</Link>
+                <Link to={agencyLoginPath} className="inline-flex items-center gap-2 hover:text-white"><ShieldCheck size={15} />Espace agence</Link>
+              </div>
+            </div>
+
+            <div className="grid content-start gap-1 rounded-2xl border border-white/10 bg-white/[0.04] p-2">
+              {contactPhone ? <ContactRow icon={PhoneCall} label="Telephone" value={contactPhone} href={`tel:${contactPhone}`} /> : null}
+              {whatsapp ? <ContactRow icon={MessageCircle} label="WhatsApp" value={whatsapp} href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`} /> : null}
+              {website ? <ContactRow icon={Globe2} label="Site web" value={website} href={website} /> : null}
+              {address ? <ContactRow icon={MapPinned} label="Adresse" value={address} /> : null}
+              {!contactPhone && !whatsapp && !website && !address ? (
+                <p className="px-4 py-6 text-sm text-white/50">Les coordonnees de l'agence seront bientot disponibles.</p>
+              ) : null}
+            </div>
+          </div>
+        </Reveal>
+      </div>
     </div>
   );
 }

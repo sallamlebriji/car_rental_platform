@@ -1,71 +1,74 @@
 import { Link } from "react-router-dom";
-import { CarFront, Fuel, Users, Settings2 } from "lucide-react";
+import { ArrowUpRight, Fuel, Settings2, Users } from "lucide-react";
 import { useThemeSettings } from "../context/ThemeContext";
 import { currency } from "../utils/format";
 import TiltCard from "./ui/TiltCard";
 
+export const CAR_FALLBACK_IMAGE = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80";
+
+const statusLabels = {
+  AVAILABLE: ["Disponible", "bg-emerald-500"],
+  RENTED: ["En location", "bg-amber-500"],
+  MAINTENANCE: ["Maintenance", "bg-orange-500"],
+  DISABLED: ["Indisponible", "bg-slate-400"]
+};
+
 export default function CarCard({ car }) {
   const { buildClientPath } = useThemeSettings();
-  const image = car.images?.[0]?.url || "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80";
+  const image = car.images?.[0]?.url || CAR_FALLBACK_IMAGE;
   const detailsPath = buildClientPath(`/cars/${car.id}`);
+  const [statusLabel, statusDot] = statusLabels[car.status] || [car.status, "bg-slate-400"];
 
   return (
-    <TiltCard>
-    <article className="group overflow-hidden rounded-card-primary border border-white/70 bg-white/90 shadow-soft backdrop-blur transition duration-300 hover:shadow-lift">
-      <div className="relative overflow-hidden">
-        <img src={image} alt={`${car.brand} ${car.model}`} className="h-64 w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-950/55 via-slate-950/10 to-transparent" />
-        <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-white/92 px-3 py-2 text-xs font-semibold text-slate-900 shadow-soft">
-          <CarFront size={14} />
-          {car.type?.name || "Vehicule"}
-        </div>
-        <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-          <div className="text-white">
-            <h3 className="text-2xl font-semibold tracking-tight">{car.brand} {car.model}</h3>
-            <p className="mt-1 text-sm text-white/75">{car.year} • {car.color || "Couleur premium"}</p>
-          </div>
-          <span className="rounded-full border border-emerald-200/60 bg-emerald-400/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-white">
-            {car.status}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-5 p-5">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl bg-slate-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-slate-500">
-              <Fuel size={14} />
-              <span className="text-[11px] uppercase tracking-[0.22em]">Carburant</span>
-            </div>
-            <p className="mt-2 text-sm font-semibold text-slate-900">{car.fuelType}</p>
-          </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-slate-500">
-              <Settings2 size={14} />
-              <span className="text-[11px] uppercase tracking-[0.22em]">Boite</span>
-            </div>
-            <p className="mt-2 text-sm font-semibold text-slate-900">{car.transmission}</p>
-          </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-3">
-            <div className="flex items-center gap-2 text-slate-500">
-              <Users size={14} />
-              <span className="text-[11px] uppercase tracking-[0.22em]">Places</span>
-            </div>
-            <p className="mt-2 text-sm font-semibold text-slate-900">{car.seats}</p>
+    <TiltCard maxX={3} maxY={4} className="h-full rounded-card-primary">
+      <Link
+        to={detailsPath}
+        className="group flex h-full flex-col overflow-hidden rounded-card-primary border border-slate-900/[0.06] bg-white shadow-soft transition-shadow duration-calm ease-calm hover:shadow-lift"
+      >
+        <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+          <img
+            src={image}
+            alt={`${car.brand} ${car.model}`}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-[900ms] ease-calm group-hover:scale-[1.04]"
+          />
+          <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+            <span className="rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold text-slate-800 backdrop-blur">
+              {car.type?.name || "Vehicule"}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold text-slate-800 backdrop-blur">
+              <span className={`h-1.5 w-1.5 rounded-full ${statusDot}`} />
+              {statusLabel}
+            </span>
           </div>
         </div>
 
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Tarif journalier</p>
-            <strong className="mt-1 block text-3xl font-semibold text-slate-950">{currency(car.pricePerDay)}</strong>
+        <div className="flex flex-1 flex-col p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="truncate font-display text-xl font-bold tracking-tight text-slate-900">{car.brand} {car.model}</h3>
+              <p className="mt-0.5 text-sm text-slate-500">{[car.year, car.color].filter(Boolean).join(" · ")}</p>
+            </div>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-all duration-calm ease-calm group-hover:border-transparent group-hover:bg-[var(--primary-color)] group-hover:text-white">
+              <ArrowUpRight size={16} />
+            </span>
           </div>
-          <span className="text-sm text-slate-500">/ jour</span>
-        </div>
 
-        <Link className="btn-primary w-full" to={detailsPath}>Voir le vehicule</Link>
-      </div>
-    </article>
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
+            <span className="inline-flex items-center gap-1.5"><Fuel size={15} className="text-slate-400" />{car.fuelType}</span>
+            <span className="inline-flex items-center gap-1.5"><Settings2 size={15} className="text-slate-400" />{car.transmission}</span>
+            <span className="inline-flex items-center gap-1.5"><Users size={15} className="text-slate-400" />{car.seats} places</span>
+          </div>
+
+          <div className="mt-auto flex items-end justify-between border-t border-slate-900/[0.06] pt-4" style={{ marginTop: "1.25rem" }}>
+            <p className="text-xs text-slate-500">A partir de</p>
+            <p className="font-display text-2xl font-bold tracking-tight text-slate-900">
+              {currency(car.pricePerDay)}
+              <span className="ml-1 text-sm font-medium text-slate-400">/ jour</span>
+            </p>
+          </div>
+        </div>
+      </Link>
     </TiltCard>
   );
 }

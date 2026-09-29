@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, CheckCircle2, MapPinned, UserRound } from "lucide-react";
+import { Building2, CheckCircle2, IdCard, KeyRound, Mail, MapPinned, Phone, UserRound } from "lucide-react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useThemeSettings } from "../context/ThemeContext";
 import { useFetch } from "../hooks/useFetch";
 import FormField from "../components/FormField";
+import AuthShell from "../components/client/AuthShell";
 
 const emptyForm = {
   agencyId: "",
@@ -77,110 +78,107 @@ export default function RegisterPage() {
     }
   }
 
+  const fields = [
+    ["Prenom", "firstName", "text", UserRound, "given-name"],
+    ["Nom", "lastName", "text", UserRound, "family-name"],
+    ["Email", "email", "email", Mail, "email"],
+    ["Mot de passe", "password", "password", KeyRound, "new-password"],
+    ["Telephone", "phone", "tel", Phone, "tel"],
+    ["Ville", "city", "text", MapPinned, "address-level2"],
+    ["Adresse", "address", "text", MapPinned, "street-address"],
+    ["CIN / Passeport", "cinOrPassport", "text", IdCard, "off"],
+    ["Permis de conduire", "driverLicense", "text", IdCard, "off"]
+  ];
+
   return (
-    <div className="space-y-8">
-      <div className="mx-auto max-w-6xl rounded-card-primary border border-slate-200 bg-white/90 p-8 shadow-soft md:p-10">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="rounded-card-secondary bg-slate-950 p-8 text-white">
-            <span className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
-              Inscription client
-            </span>
-            <h1 className="mt-6 text-4xl font-semibold tracking-tight">Creer un compte client</h1>
-            <p className="mt-4 text-base leading-relaxed text-slate-300">
-              {slug
-                ? "Votre compte sera rattache a cette agence. Completez votre profil puis attendez la validation par l'admin de cette agence."
-                : "Choisissez votre agence, completez votre profil, puis attendez la validation par l'admin de l'agence."}
-            </p>
-
-            <div className="mt-8 space-y-3">
-              {[
-                slug ? "Le client reste limite a cette seule agence" : "Le client choisit une agence lors de l'inscription",
-                "Le compte est cree en attente de validation",
-                "L'admin agence l'active depuis l'espace clients"
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3">
-                  <CheckCircle2 size={18} className="text-emerald-300" />
-                  <span className="text-sm text-slate-200">{item}</span>
-                </div>
-              ))}
+    <AuthShell
+      wide
+      eyebrow="Inscription client"
+      title="Creez votre espace client"
+      description={
+        slug
+          ? "Votre compte sera rattache a cette agence et active apres validation par son equipe."
+          : "Choisissez votre agence, completez votre profil, puis attendez la validation par l'agence."
+      }
+      aside={
+        <div className="space-y-3">
+          {[
+            slug ? "Compte limite a cette seule agence" : "Choix de l'agence a l'inscription",
+            "Compte cree en attente de validation",
+            "Activation par l'agence depuis son espace"
+          ].map((item) => (
+            <div key={item} className="flex items-center gap-3 text-sm text-white/80">
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-300" />
+              {item}
             </div>
-
-            {selectedAgency ? (
-              <div className="mt-8 rounded-card-secondary bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Agence rattachee</p>
-                <h2 className="mt-3 text-2xl font-semibold">{selectedAgency.name}</h2>
-                <p className="mt-2 text-sm text-slate-300">
-                  {[selectedAgency.city, selectedAgency.country].filter(Boolean).join(", ") || "Maroc"}
-                </p>
-              </div>
-            ) : null}
-          </div>
-
-          <div>
-            <h2 className="text-3xl font-semibold text-slate-950">Demande d'inscription</h2>
-            <form className="mt-6 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
-              {slug ? (
-                <FormField label="Agence rattachee">
-                  <div className="flex min-h-14 items-center gap-3 rounded-[1.3rem] border border-slate-200 bg-slate-50 px-4">
-                    <Building2 size={18} className="text-slate-400" />
-                    <div>
-                      <p className="font-medium text-slate-900">{selectedAgency?.name || "Agence en chargement"}</p>
-                      <p className="text-xs text-slate-500">{[selectedAgency?.city, selectedAgency?.country].filter(Boolean).join(", ") || "Portail dedie"}</p>
-                    </div>
-                  </div>
-                </FormField>
-              ) : (
-                <FormField label="Agence">
-                  <div className="relative">
-                    <Building2 size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select className="input pl-11" value={form.agencyId} onChange={(e) => setForm({ ...form, agencyId: e.target.value, agencySlug: "" })}>
-                      <option value="">Choisir une agence</option>
-                      {agencies.map((agency) => (
-                        <option key={agency.id} value={agency.id}>
-                          {agency.name} {agency.city ? `- ${agency.city}` : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </FormField>
-              )}
-
-              {[
-                ["Prenom", "firstName", "text", UserRound],
-                ["Nom", "lastName", "text", UserRound],
-                ["Email", "email", "email", UserRound],
-                ["Mot de passe", "password", "password", UserRound],
-                ["Telephone", "phone", "text", UserRound],
-                ["Ville", "city", "text", MapPinned],
-                ["Adresse", "address", "text", MapPinned],
-                ["CIN / Passeport", "cinOrPassport", "text", UserRound],
-                ["Permis de conduire", "driverLicense", "text", UserRound]
-              ].map(([label, key, type, Icon]) => (
-                <FormField key={key} label={label}>
-                  <div className="relative">
-                    <Icon size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input className="input pl-11" type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
-                  </div>
-                </FormField>
-              ))}
-
-              {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700 md:col-span-2">{success}</p> : null}
-              {error ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 md:col-span-2">{error}</p> : null}
-
-              <button className="btn-primary md:col-span-2" disabled={submitting}>
-                {submitting ? "Envoi..." : "Envoyer la demande d'inscription"}
-              </button>
-            </form>
-
-            <p className="mt-4 text-sm text-slate-500">
-              Vous avez deja un compte ?{" "}
-              <Link className="font-semibold text-teal-700" to={buildClientPath("/login")}>
-                Se connecter a l'espace client
-              </Link>
-            </p>
-          </div>
+          ))}
+          {selectedAgency ? (
+            <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+              <p className="text-xs text-white/50">Agence rattachee</p>
+              <p className="mt-1 font-display text-lg font-bold">{selectedAgency.name}</p>
+              <p className="text-sm text-white/60">{[selectedAgency.city, selectedAgency.country].filter(Boolean).join(", ") || "Maroc"}</p>
+            </div>
+          ) : null}
         </div>
-      </div>
-    </div>
+      }
+    >
+      <h2 className="hidden font-display text-2xl font-bold tracking-tight text-slate-900 lg:block">Demande d'inscription</h2>
+      <p className="mt-1 hidden text-sm text-slate-500 lg:block">Quelques informations pour preparer vos futurs contrats.</p>
+
+      <form className="mt-8 grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>
+        <div className="sm:col-span-2">
+          {slug ? (
+            <FormField label="Agence rattachee">
+              <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5">
+                <Building2 size={17} className="text-slate-400" />
+                <div>
+                  <p className="text-sm font-medium text-slate-900">{selectedAgency?.name || "Agence en chargement"}</p>
+                  <p className="text-xs text-slate-500">{[selectedAgency?.city, selectedAgency?.country].filter(Boolean).join(", ") || "Portail dedie"}</p>
+                </div>
+              </div>
+            </FormField>
+          ) : (
+            <FormField label="Agence">
+              <div className="relative">
+                <Building2 size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <select className="input !pl-11" value={form.agencyId} onChange={(e) => setForm({ ...form, agencyId: e.target.value, agencySlug: "" })}>
+                  <option value="">Choisir une agence</option>
+                  {agencies.map((agency) => (
+                    <option key={agency.id} value={agency.id}>
+                      {agency.name} {agency.city ? `- ${agency.city}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </FormField>
+          )}
+        </div>
+
+        {fields.map(([label, key, type, Icon, autoComplete]) => (
+          <div key={key} className={key === "address" ? "sm:col-span-2" : ""}>
+            <FormField label={label}>
+              <div className="relative">
+                <Icon size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input className="input !pl-11" type={type} autoComplete={autoComplete} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+              </div>
+            </FormField>
+          </div>
+        ))}
+
+        {success ? <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700 sm:col-span-2">{success}</p> : null}
+        {error ? <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 sm:col-span-2">{error}</p> : null}
+
+        <button className="btn-primary !py-3 disabled:opacity-60 sm:col-span-2" disabled={submitting}>
+          {submitting ? "Envoi..." : "Envoyer la demande d'inscription"}
+        </button>
+      </form>
+
+      <p className="mt-6 text-sm text-slate-500">
+        Vous avez deja un compte ?{" "}
+        <Link className="font-semibold text-slate-900 underline-offset-4 hover:underline" to={buildClientPath("/login")}>
+          Se connecter
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
