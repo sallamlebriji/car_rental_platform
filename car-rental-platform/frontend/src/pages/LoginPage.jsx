@@ -4,6 +4,7 @@ import { KeyRound, UserRound } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useThemeSettings } from "../context/ThemeContext";
 import FormField from "../components/FormField";
+import DemoAccounts, { clientDemoAccounts } from "../components/DemoAccounts";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -18,19 +19,28 @@ export default function LoginPage() {
   const registerPath = buildClientPath("/register");
   const agencyLoginPath = slug ? `${portalBasePath}/admin/login` : "/admin/login";
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function submitCredentials(credentials) {
     setError("");
     setSubmitting(true);
 
     try {
-      await login({ ...form, portal: "client", agencySlug: slug || undefined });
+      await login({ ...credentials, portal: "client", agencySlug: slug || undefined });
       navigate(buildClientPath("/"));
     } catch (err) {
       setError(err.response?.data?.message || "Connexion client impossible.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    submitCredentials(form);
+  }
+
+  function handleDemo(credentials) {
+    setForm(credentials);
+    submitCredentials(credentials);
   }
 
   return (
@@ -85,6 +95,9 @@ export default function LoginPage() {
               </Link>
             </p>
           </form>
+          <div className="mt-6">
+            <DemoAccounts accounts={clientDemoAccounts} disabled={submitting} onSelect={handleDemo} />
+          </div>
         </div>
       </div>
     </div>

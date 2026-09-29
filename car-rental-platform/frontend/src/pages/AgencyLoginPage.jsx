@@ -4,6 +4,7 @@ import { Building2, KeyRound, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useThemeSettings } from "../context/ThemeContext";
 import FormField from "../components/FormField";
+import DemoAccounts, { agencyDemoAccounts } from "../components/DemoAccounts";
 
 export default function AgencyLoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -14,19 +15,28 @@ export default function AgencyLoginPage() {
   const { slug } = useParams();
   const { activeAgency, buildClientPath } = useThemeSettings();
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function submitCredentials(credentials) {
     setError("");
     setSubmitting(true);
 
     try {
-      const user = await login({ ...form, portal: "agency", agencySlug: slug || undefined });
+      const user = await login({ ...credentials, portal: "agency", agencySlug: slug || undefined });
       navigate(user.type === "SUPER_ADMIN" ? "/super-admin/dashboard" : "/admin/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Connexion agence impossible.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    submitCredentials(form);
+  }
+
+  function handleDemo(credentials) {
+    setForm(credentials);
+    submitCredentials(credentials);
   }
 
   return (
@@ -90,6 +100,9 @@ export default function AgencyLoginPage() {
               </Link>
             </p>
           </form>
+          <div className="mt-6">
+            <DemoAccounts accounts={agencyDemoAccounts} disabled={submitting} onSelect={handleDemo} />
+          </div>
         </div>
       </div>
     </div>

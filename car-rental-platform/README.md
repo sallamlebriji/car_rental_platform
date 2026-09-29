@@ -145,6 +145,8 @@ npm run dev
   - email: `client@example.com`
   - mot de passe: `password123`
 
+Ces comptes sont proposes en un clic (boutons "Comptes de demonstration") sur les pages de connexion client et agence. Pour les masquer en production : `VITE_ENABLE_DEMO=false` dans `frontend/.env`.
+
 ## API principale
 
 ### Auth
