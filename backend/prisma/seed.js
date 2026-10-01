@@ -281,7 +281,7 @@ async function main() {
 
   const superAdmin = await prisma.user.upsert({
     where: { email: "superadmin@agency.com" },
-    update: {},
+    update: { passwordHash: hashedPassword, isActive: true },
     create: {
       firstName: "Super",
       lastName: "Admin",
@@ -295,7 +295,7 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@agency.com" },
-    update: {},
+    update: { passwordHash: hashedPassword, isActive: true },
     create: {
       firstName: "Agence",
       lastName: "Admin",
@@ -320,7 +320,7 @@ async function main() {
 
   const clientUser = await prisma.user.upsert({
     where: { email: "client@example.com" },
-    update: {},
+    update: { passwordHash: hashedPassword, isActive: true },
     create: {
       firstName: "Sara",
       lastName: "Bennani",
