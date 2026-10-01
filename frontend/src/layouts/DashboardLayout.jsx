@@ -163,16 +163,20 @@ function SidebarContent({ sections, collapsed, isSuperAdmin, badges, onNavigate,
     <div className="flex h-full flex-col">
       <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} px-4 pb-4 pt-5`}>
         <Link to="/" className="flex items-center gap-3" onClick={onNavigate}>
-          <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-glow"
-            style={{ background: "linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 55%, black))" }}
-          >
-            {isSuperAdmin ? <Building2 size={18} /> : <CarFront size={18} />}
-          </span>
+          {isSuperAdmin ? (
+            <img src="/app-logo.svg" alt="" className="h-9 w-9 shrink-0 rounded-xl shadow-glow" />
+          ) : (
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-glow"
+              style={{ background: "linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 55%, black))" }}
+            >
+              <CarFront size={18} />
+            </span>
+          )}
           {!collapsed ? (
             <span className="min-w-0">
-              <span className="block font-display text-[0.95rem] font-semibold leading-tight text-white">Atlas Drive</span>
-              <span className="block text-[0.7rem] text-slate-500">{isSuperAdmin ? "Reseau" : "Agence"}</span>
+              <span className="block font-display text-[0.95rem] font-semibold leading-tight text-white">{isSuperAdmin ? "Car Rental" : "Atlas Drive"}</span>
+              <span className="block text-[0.7rem] text-slate-500">{isSuperAdmin ? "Super admin SaaS" : "Agence"}</span>
             </span>
           ) : null}
         </Link>
