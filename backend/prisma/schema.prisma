@@ -1,0 +1,492 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  SUPER_ADMIN
+  ADMIN
+  EMPLOYEE
+  CLIENT
+}
+
+enum CarStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+  DISABLED
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  REFUSED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  PAYPAL
+  STRIPE
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  REFUNDED
+}
+
+enum PricingType {
+  FIXED
+  PERCENTAGE
+  DAILY
+}
+
+enum OptionPricingType {
+  FIXED
+  DAILY
+}
+
+model User {
+  id           String    @id @default(cuid())
+  firstName    String
+  lastName     String
+  email        String    @unique
+  phone        String?
+  passwordHash String
+  type         UserType
+  isActive     Boolean   @default(true)
+  roleId       String?
+  agencyId      String?
+  employee     Employee?
+  client       Client?
+  role         Role?     @relation(fields: [roleId], references: [id])
+  agency       Agency?   @relation(fields: [agencyId], references: [id])
+  activityLogs ActivityLog[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@map("user")
+}
+
+model Agency {
+  id                    String               @id @default(cuid())
+  name                  String
+  slug                  String               @unique
+  code                  String?              @unique
+  description           String?
+  address               String?
+  city                  String?
+  country               String?
+  phone                 String?
+  email                 String?
+  website               String?
+  whatsapp              String?
+  logoUrl               String?
+  coverImageUrl         String?
+  isActive              Boolean              @default(true)
+  users                 User[]
+  cars                  Car[]
+  reservations          Reservation[]
+  agencySetting         AgencySetting?
+  visualSetting         VisualSetting?
+  reservationSetting    ReservationSetting?
+  notificationSetting   NotificationSetting?
+  documentSetting       DocumentSetting?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  deletedAt             DateTime?
+
+  @@map("agency")
+}
+
+model Role {
+  id               String           @id @default(cuid())
+  name             String           @unique
+  code             String           @unique
+  description      String?
+  isSystem         Boolean          @default(false)
+  users            User[]
+  employees        Employee[]
+  rolePermissions  RolePermission[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  @@map("role")
+}
+
+model Permission {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  code            String           @unique
+  category        String
+  rolePermissions RolePermission[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+
+  @@map("permission")
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([roleId, permissionId])
+
+  @@map("rolepermission")
+}
+
+model Employee {
+  id          String        @id @default(cuid())
+  userId      String        @unique
+  roleId      String?
+  title       String?
+  notes       String?
+  isActive    Boolean       @default(true)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        Role?         @relation(fields: [roleId], references: [id])
+  reservations Reservation[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@map("employee")
+}
+
+model Client {
+  id               String        @id @default(cuid())
+  userId           String        @unique
+  city             String?
+  address          String?
+  cinOrPassport    String?
+  driverLicense    String?
+  identityDocUrl   String?
+  licenseDocUrl    String?
+  isBlocked        Boolean       @default(false)
+  internalNote     String?
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reservations     Reservation[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  @@map("client")
+}
+
+model CarType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  cars        Car[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@map("cartype")
+}
+
+model Car {
+  id             String         @id @default(cuid())
+  agencyId        String
+  brand          String
+  model          String
+  plateNumber    String         @unique
+  year           Int
+  color          String?
+  seats          Int
+  fuelType       String
+  transmission   String
+  mileage        Int?
+  pricePerDay    Decimal        @db.Decimal(10, 2)
+  depositAmount  Decimal        @db.Decimal(10, 2)
+  description    String?
+  conditions     String?
+  isActive       Boolean        @default(true)
+  status         CarStatus      @default(AVAILABLE)
+  typeId         String?
+  agency         Agency         @relation(fields: [agencyId], references: [id])
+  type           CarType?       @relation(fields: [typeId], references: [id])
+  images         CarImage[]
+  reservations   Reservation[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+
+  @@map("car")
+}
+
+model CarImage {
+  id         String   @id @default(cuid())
+  carId       String
+  url        String
+  sortOrder  Int      @default(0)
+  car        Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+
+  @@map("carimage")
+}
+
+model Pack {
+  id                String         @id @default(cuid())
+  name              String         @unique
+  description       String?
+  pricingType       PricingType
+  pricingValue      Decimal        @db.Decimal(10, 2)
+  includedKm        Int?
+  hasInsurance      Boolean        @default(false)
+  includesDriver    Boolean        @default(false)
+  includesDelivery  Boolean        @default(false)
+  conditions        String?
+  isActive          Boolean        @default(true)
+  reservations      Reservation[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deletedAt         DateTime?
+
+  @@map("pack")
+}
+
+model Option {
+  id           String            @id @default(cuid())
+  name         String            @unique
+  description  String?
+  price        Decimal           @db.Decimal(10, 2)
+  pricingType  OptionPricingType
+  isActive     Boolean           @default(true)
+  reservations ReservationOption[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  deletedAt    DateTime?
+
+  @@map("option")
+}
+
+model Reservation {
+  id               String               @id @default(cuid())
+  reference        String               @unique
+  agencyId         String
+  clientId         String
+  carId            String
+  packId           String?
+  employeeId       String?
+  startDate        DateTime
+  endDate          DateTime
+  totalDays        Int
+  basePrice        Decimal              @db.Decimal(10, 2)
+  packPrice        Decimal              @db.Decimal(10, 2)
+  optionsPrice     Decimal              @db.Decimal(10, 2)
+  bookingFees      Decimal              @db.Decimal(10, 2)
+  totalPrice       Decimal              @db.Decimal(10, 2)
+  advanceAmount    Decimal              @db.Decimal(10, 2)
+  remainingAmount  Decimal              @db.Decimal(10, 2)
+  status           ReservationStatus    @default(PENDING)
+  finalPrice       Decimal?             @db.Decimal(10, 2)
+  internalNote     String?
+  agency           Agency               @relation(fields: [agencyId], references: [id])
+  client           Client               @relation(fields: [clientId], references: [id])
+  car              Car                  @relation(fields: [carId], references: [id])
+  pack             Pack?                @relation(fields: [packId], references: [id])
+  employee         Employee?            @relation(fields: [employeeId], references: [id])
+  options          ReservationOption[]
+  payments         Payment[]
+  contract         Contract?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  deletedAt        DateTime?
+
+  @@map("reservation")
+}
+
+model ReservationOption {
+  id             String      @id @default(cuid())
+  reservationId  String
+  optionId       String
+  name           String
+  price          Decimal     @db.Decimal(10, 2)
+  pricingType    OptionPricingType
+  reservation    Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  option         Option      @relation(fields: [optionId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([reservationId, optionId])
+
+  @@map("reservationoption")
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  reservationId  String
+  amountTotal    Decimal       @db.Decimal(10, 2)
+  amountPaid     Decimal       @db.Decimal(10, 2)
+  remaining      Decimal       @db.Decimal(10, 2)
+  method         PaymentMethod
+  status         PaymentStatus
+  note           String?
+  reservation    Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@map("payment")
+}
+
+model Contract {
+  id              String      @id @default(cuid())
+  reservationId   String      @unique
+  contractNumber  String      @unique
+  fileUrl         String?
+  contentSnapshot Json?
+  reservation     Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime?
+
+  @@map("contract")
+}
+
+model AgencySetting {
+  id              String   @id @default(cuid())
+  agencyId         String   @unique
+  agencyName      String
+  logoUrl         String?
+  faviconUrl      String?
+  slogan          String?
+  address         String?
+  phone           String?
+  email           String?
+  whatsapp        String?
+  website         String?
+  ice             String?
+  rc              String?
+  ifNumber        String?
+  description     String?
+  openingHours    String?
+  facebook        String?
+  instagram       String?
+  tiktok          String?
+  linkedin        String?
+  agency          Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("agencysetting")
+}
+
+model VisualSetting {
+  id                String   @id @default(cuid())
+  agencyId           String   @unique
+  primaryColor      String   @default("#0f766e")
+  secondaryColor    String   @default("#f59e0b")
+  themeMode         String   @default("light")
+  coverImageUrl     String?
+  homepageImages    Json?
+  homepageText      String?
+  primaryButtonText String?
+  visibleSections   Json?
+  agency            Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("visualsetting")
+}
+
+model ReservationSetting {
+  id                          String   @id @default(cuid())
+  agencyId                     String   @unique
+  minimumRentalDays           Int      @default(1)
+  maximumRentalDays           Int      @default(30)
+  bookingFees                 Decimal  @db.Decimal(10, 2)
+  requiredAdvancePercent      Decimal  @db.Decimal(5, 2)
+  defaultDepositAmount        Decimal  @db.Decimal(10, 2)
+  cancellationPolicy          String?
+  generalTerms                String?  @db.Text
+  reservationSuccessMessage   String?
+  allowGuestReservation       Boolean  @default(true)
+  allowOnlinePayment          Boolean  @default(false)
+  allowDocumentUpload         Boolean  @default(true)
+  agency                      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@map("reservationsetting")
+}
+
+model NotificationSetting {
+  id                          String   @id @default(cuid())
+  agencyId                     String   @unique
+  smtpHost                    String?
+  smtpPort                    Int?
+  smtpUser                    String?
+  smtpPassword                String?
+  emailNotificationsEnabled   Boolean  @default(false)
+  whatsappNotificationsEnabled Boolean @default(false)
+  internalNotificationsEnabled Boolean @default(true)
+  autoClientMessage           String?
+  autoAdminMessage            String?
+  templates                   Json?
+  agency                      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@map("notificationsetting")
+}
+
+model DocumentSetting {
+  id                 String   @id @default(cuid())
+  agencyId            String   @unique
+  contractTemplate   String?  @db.Text
+  generalTerms       String?  @db.Text
+  privacyPolicy      String?  @db.Text
+  legalNotice        String?  @db.Text
+  invoiceTemplate    String?  @db.Text
+  paymentReceiptTemplate String? @db.Text
+  agency             Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("documentsetting")
+}
+
+model AppSetting {
+  id         String   @id @default(cuid())
+  key        String   @unique
+  value      Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("appsetting")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId       String?
+  action      String
+  entityType  String
+  entityId    String?
+  description String?
+  metadata    Json?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("activitylog")
+}
